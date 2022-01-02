@@ -1,3 +1,6 @@
+import argparse
+import json
+
 
 def find_mutation(doc: dict, mutation: dict, description: str):
     """
@@ -41,3 +44,20 @@ def generate_update_statement(document: dict, mutation: dict) -> dict:
         operation = list(update.keys())[0]
         results[operation] = update[operation]
     return results
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('document', help='filename of a JSON document containing subdocuments')
+    parser.add_argument(
+        'mutation',
+        help='filename of a JSON document containing instructions for adding, removing, or updating items in the'
+             ' provided "document"'
+    )
+    args = parser.parse_args()
+    with open(args.document) as doc_file:
+        input_doc = json.load(doc_file)
+    with open(args.mutation) as mutate_file:
+        input_mutate = json.load(mutate_file)
+    output = generate_update_statement(input_doc, input_mutate)
+    print(json.dumps(output))
